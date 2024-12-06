@@ -1,0 +1,9 @@
+.ipynb_checkpoints
+__pycache__
+*~
+*.so
+*.o
+*.out
+plots*
+chirp*
+temp*
