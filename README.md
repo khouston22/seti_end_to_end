@@ -25,7 +25,7 @@ Acta Astronautica, AA-D-25-00258, in preparation.
 Notebook "01_seti_end_to_end.ipynb" does the basic end-to-end operation.  A raw file is input
 to rawspec with fine fft size and the number of sti averages ("n_sti", specified as "-t" or "--ints" in rawspec) as parameters.  Rawspec
 produces averaged spectrograms (matrices of energy vs time and frequency) in the form of filterbank files (.h5).
-A search program (seticore/seticore2/turbo_seti) is then called to do the search for narrowband drifting tones.  Detections or "hits"
+A search program (seticore/seticore2/turbo_seti/bliss2) is then called to do the search for narrowband drifting tones.  Detections or "hits"
 are declared and output to a text file.  Plots of hits (e.g. signal-to-noise ratio (SNR) vs drift rate or frequency) are produced.
 
 Notebook "02_seti_param_sweep.ipynb" runs "01_seti_end_to_end.ipynb" many times for a single raw file, 
@@ -55,6 +55,8 @@ At present, changes have been made only to De-Doppler mode, and assume an h5 sin
 analogous to TurboSETI on GBT.  Operation of cadence mode and beamforming mode (critical to 
 MeerKAT and VLA) have not been tested and probably need additional fixes.
 
+Analogous runs of bliss can be run to enable side-by-side comparisons with seticore2 and turbo_seti.
+
 Related repositories include:
 
 https://github.com/khouston22/seticore2 (a fork of seticore https://github.com/lacker/seticore)
@@ -65,6 +67,40 @@ https://github.com/UCBerkeleySETI/rawspec, and
 
 https://github.com/khouston22/seti_detect_sim.
 
+https://github.com/khouston22/bliss2 (a fork of bliss https://github.com/n-west/bliss)
+
+
+## Setting up environment variables
+
+Examples of environment variables that may need to be set up in ~/.profile include the following:
+
+export TURBO_SETI_PATH=$HOME/Dropbox/kgit/turbo_seti
+
+export SETICORE2_PATH=$HOME/kgit/seticore2/build
+
+export SETICORE2_PY_PATH=$HOME/kgit/seticore2/python
+
+export BLISS2_PATH=$HOME/kgit/bliss2/build/bliss
+
+export BLISS2_PLOT_PATH=$HOME/kgit/bliss2/bliss/python/blissdedrift/plot_utils
+
+export DATADIR=/datax/scratch/khouston
+
+export RAWDIR=/datax/scratch/khouston/raw_test_files
+
+export RAW=/datax/scratch/khouston/raw_test_files
+
+export RAW_BACKUP_BASE_DIR=/datax/scratch/khouston/temp
+
+export SGDIR=/datax/scratch/khouston/sg_det_files
+
+export SG=/datax/scratch/khouston/sg_det_files
+
+export SC2=$HOME/kgit/seticore2
+
+export E2E=$HOME/kgit/seti_end_to_end
+
+export BL2=$HOME/kgit/bliss2/build/bliss
 
 
 
