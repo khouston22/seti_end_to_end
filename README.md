@@ -74,34 +74,35 @@ https://github.com/khouston22/bliss2 (a fork of bliss https://github.com/n-west/
 
 Examples of environment variables that may need to be set up in ~/.profile include the following:
 
+```
 export TURBO_SETI_PATH=$HOME/Dropbox/kgit/turbo_seti
-
 export SETICORE2_PATH=$HOME/kgit/seticore2/build
-
 export SETICORE2_PY_PATH=$HOME/kgit/seticore2/python
-
 export BLISS2_PATH=$HOME/kgit/bliss2/build/bliss
-
 export BLISS2_PLOT_PATH=$HOME/kgit/bliss2/bliss/python/blissdedrift/plot_utils
-
 export DATADIR=/datax/scratch/khouston
-
 export RAWDIR=/datax/scratch/khouston/raw_test_files
-
 export RAW=/datax/scratch/khouston/raw_test_files
-
 export RAW_BACKUP_BASE_DIR=/datax/scratch/khouston/temp
-
 export SGDIR=/datax/scratch/khouston/sg_det_files
-
 export SG=/datax/scratch/khouston/sg_det_files
-
 export SC2=$HOME/kgit/seticore2
-
 export E2E=$HOME/kgit/seti_end_to_end
-
 export BL2=$HOME/kgit/bliss2/build/bliss
+```
 
+## Setting up a conda environment
 
+The notebooks have been successfully run in python 3.10.16.
 
+Commands to install additional packages include:
 
+```
+pip install matplotlib
+pip install astropy
+pip install blimpy
+pip install setigen
+pip install turbo_seti
+pip install nbformat
+pip install nbclient
+```
