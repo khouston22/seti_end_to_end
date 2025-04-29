@@ -100,6 +100,41 @@ def plot_h5_sg_psd(base_h5_name,
 
     return
 
+def get_h5_psd_db(base_h5_name,
+        fig_f_limits_MHz=[],
+        fig_t_limits_sec=[]):
+    """
+    Obtains spectrum in dB of h5 filterbank file over desired range of frequency and time
+    Uses blimpy waterfall and plot_spectrum functions
+    TODO: Break up time and/or frequency if wf data exceeds memory limits
+    """
+    if len(fig_f_limits_MHz)==2:
+        if len(fig_t_limits_sec)==2:
+            wf = bl.Waterfall(base_h5_name,f_start=fig_f_limits_MHz[0],f_stop=fig_f_limits_MHz[1],
+                              t_start=fig_t_limits_sec[0],t_stop=fig_t_limits_sec[1])
+        else:
+            wf = bl.Waterfall(base_h5_name,f_start=fig_f_limits_MHz[0],f_stop=fig_f_limits_MHz[1])
+    else:
+        if len(fig_t_limits_sec)==2:
+            wf = bl.Waterfall(base_h5_name,t_start=fig_t_limits_sec[0],t_stop=fig_t_limits_sec[1])
+        else:
+            wf = bl.Waterfall(base_h5_name)
+    
+    freqs_MHz, plot_data = wf.grab_data()
+
+    # Using ascending frequency for all plots.
+    if wf.header['foff'] < 0:
+        plot_data = plot_data[..., ::-1]  # Reverse data
+        freqs_MHz = freqs_MHz[::-1]
+
+    if len(plot_data.shape) > 1:
+        spectrum_db = db(plot_data.mean(axis=0))
+    else:
+        spectrum_db = db(plot_data.mean())
+    
+    return freqs_MHz, spectrum_db
+
+
 def plot_h5_psd_db(base_h5_name,
         fig = [],
         wf = [],
@@ -108,11 +143,13 @@ def plot_h5_psd_db(base_h5_name,
         fig_title='',
         fig_text_list=[],
         rel_freq = True,
+        do_plot = True,   
         display_fig=True,
         savfig_name=''):
     """
     Plots spectrum in dB of h5 filterbank file over desired frequency range,
     but optionally plots frequency axis in KHz offset from center frequency when rel_freq is True
+    Returns freqs_MHz, spectrum_db without doing plot if do_plot is False
     Uses blimpy waterfall and plot_spectrum functions
     """
     if not wf:  # if wf empty, not passed into fn
@@ -122,32 +159,35 @@ def plot_h5_psd_db(base_h5_name,
             wf = bl.Waterfall(base_h5_name)
         
     if len(fig_f_limits_MHz)==2:
-        freqs, plot_data = wf.grab_data(fig_f_limits_MHz[0],fig_f_limits_MHz[1])
+        freqs_MHz, plot_data = wf.grab_data(fig_f_limits_MHz[0],fig_f_limits_MHz[1])
     else:
-        freqs, plot_data = wf.grab_data()
+        freqs_MHz, plot_data = wf.grab_data()
 
-    # Using accending frequency for all plots.
+    # Using ascending frequency for all plots.
     if wf.header['foff'] < 0:
         plot_data = plot_data[..., ::-1]  # Reverse data
-        freqs = freqs[::-1]
+        freqs_MHz = freqs_MHz[::-1]
 
     if len(fig_f_limits_MHz)!=2:
-        fig_f_limits_MHz = [freqs[0],freqs[-1]]
+        fig_f_limits_MHz = [freqs_MHz[0],freqs_MHz[-1]]
 
     if len(plot_data.shape) > 1:
-        spectrum = db(plot_data.mean(axis=0))
+        spectrum_db = db(plot_data.mean(axis=0))
     else:
-        spectrum = db(plot_data.mean())
+        spectrum_db = db(plot_data.mean())
     
     f_mid = (fig_f_limits_MHz[0]+fig_f_limits_MHz[1])/2.
     
     if rel_freq:
-        freqs = (freqs - f_mid)*1e3
+        freqs_MHz = (freqs_MHz - f_mid)*1e3
         f1 = (fig_f_limits_MHz[0]-f_mid)*1e3
         f2 = (fig_f_limits_MHz[1]-f_mid)*1e3
     else:
         f1 = fig_f_limits_MHz[0]
         f2 = fig_f_limits_MHz[1]
+
+    if not do_plot:
+        return freqs_MHz, spectrum_db
     
     if not fig:
         fig = plt.figure(figsize=(10, 6))
@@ -155,7 +195,7 @@ def plot_h5_psd_db(base_h5_name,
     else:
         this_is_subplot = True
     
-    plt.plot(freqs,spectrum)
+    plt.plot(freqs_MHz,spectrum_db)
     
     if len(fig_title)>0:
         plt.title(fig_title)
@@ -170,7 +210,7 @@ def plot_h5_psd_db(base_h5_name,
     plt.grid()
     
     if this_is_subplot:
-        return
+        return freqs_MHz, spectrum_db
     
     if rel_freq:
         plt.xlabel(f'Frequency (KHz) offset from {f_mid:.6f} MHz')
@@ -183,7 +223,7 @@ def plot_h5_psd_db(base_h5_name,
         plt.show()
     else:
         plt.close(fig)
-    return
+    return freqs_MHz, spectrum_db
 
 def plot_h5_psd_db_bl(base_h5_name,
         fig = [],
