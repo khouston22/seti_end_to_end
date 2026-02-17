@@ -81,12 +81,22 @@ def read_dat(filename):
     DEC = hits[4].strip().split('\t')[2].split(':')[-1].strip()
 
     DELTAT = hits[5].strip().split('\t')[0].split(':')[-1].strip()  # s
-    DELTAF = hits[5].strip().split('\t')[1].split(':')[-1].strip()  # Hz
-
+    
     # As of version 2.1.0, there are 2 additional parameters:
     try:
-        max_drift_rate = hits[5].strip().split('\t')[2].split(':')[-1].strip() # Hz/s
-        obs_length = hits[5].strip().split('\t')[3].split(':')[-1].strip() # s
+        split_line5 = hits[5].strip().split('\t')
+        if (len(split_line5)==4):
+            # normal case
+            DELTAF = hits[5].strip().split('\t')[1].split(':')[-1].strip()  # Hz
+            max_drift_rate = hits[5].strip().split('\t')[2].split(':')[-1].strip() # Hz/s
+            obs_length = hits[5].strip().split('\t')[3].split(':')[-1].strip() # s
+        elif (len(split_line5)==3):
+            # case where tab omitted before "max_drift_rate:" (Early bug in Bliss)
+            split1 = split_line5[1].strip().split('max')
+            DELTAF = split1[0].split(':')[-1].strip()  # Hz
+            max_drift_rate = split1[1].split(':')[-1].strip() # Hz/s
+            obs_length = hits[5].strip().split('\t')[2].split(':')[-1].strip() # s
+        
     except Exception as exc:
         msg = '*** Out-of-date DAT file format detected in {}.  Rerun doppler search!' \
               .format(filename)
