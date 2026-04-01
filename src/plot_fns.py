@@ -105,8 +105,7 @@ def plot_generic(x_data,
         plt.savefig(savfig_name,bbox_inches='tight')
     if display_fig:
         plt.show()
-    if (not this_is_subplot):
-        plt.close(fig)
+    plt.close(fig)
     return
 
 
