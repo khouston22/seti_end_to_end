@@ -14,3 +14,5 @@ zero_drift*
 raw*
 temp*
 .virtual_*
+*.f32
+run_str_log*
